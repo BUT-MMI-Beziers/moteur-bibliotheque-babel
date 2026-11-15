@@ -24,7 +24,7 @@ final class GenererCle extends Command
     /** @var string */
     protected $description = 'Tire une clé BABEL_KEY et l\'écrit dans le fichier .env';
 
-    private const LIGNE = '/^BABEL_KEY=([^\r\n]*)$/m';
+    private const LIGNE = '/^BABEL_KEY=([^\r\n]*)(?=\r?$)/m';
 
     public function handle(): int
     {
@@ -107,13 +107,14 @@ final class GenererCle extends Command
         if (preg_match(self::LIGNE, $contenu) === 1) {
             return (string) preg_replace_callback(self::LIGNE, static fn (): string => $ligne, $contenu);
         }
-        if (preg_match('/^APP_KEY=[^\r\n]*$/m', $contenu, $appKey, PREG_OFFSET_CAPTURE) === 1) {
+        $finDeLigne = str_contains($contenu, "\r\n") ? "\r\n" : "\n";
+        if (preg_match('/^APP_KEY=[^\r\n]*(?=\r?$)/m', $contenu, $appKey, PREG_OFFSET_CAPTURE) === 1) {
             $fin = $appKey[0][1] + strlen($appKey[0][0]);
 
-            return substr($contenu, 0, $fin) . "\n" . $ligne . substr($contenu, $fin);
+            return substr($contenu, 0, $fin) . $finDeLigne . $ligne . substr($contenu, $fin);
         }
-        $separateur = $contenu === '' || str_ends_with($contenu, "\n") ? '' : "\n";
+        $separateur = $contenu === '' || str_ends_with($contenu, "\n") ? '' : $finDeLigne;
 
-        return $contenu . $separateur . $ligne . "\n";
+        return $contenu . $separateur . $ligne . $finDeLigne;
     }
 }
