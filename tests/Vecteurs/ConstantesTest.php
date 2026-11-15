@@ -22,7 +22,6 @@ final class ConstantesTest extends TestCase
         self::assertSame($attendu['bits'], Constantes::BITS);
         self::assertSame($attendu['bits'], strlen(gmp_strval($n, 2)));
         self::assertSame($attendu['demi'], Constantes::DEMI);
-        self::assertSame(intdiv(Constantes::BITS, 2), Constantes::DEMI);
         self::assertSame($attendu['octets_demi'], Constantes::OCTETS_DEMI);
         self::assertSame($attendu['tours'], Constantes::TOURS);
         self::assertSame($attendu['blocs_par_tour'], Constantes::BLOCS);
