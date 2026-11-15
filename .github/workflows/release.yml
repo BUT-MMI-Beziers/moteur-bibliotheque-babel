@@ -24,6 +24,8 @@ jobs:
       - id: release
         uses: googleapis/release-please-action@v4
         with:
+          # Explicite : sinon release-please vise la branche par défaut du dépôt, quelle qu'elle soit.
+          target-branch: main
           config-file: release-please-config.json
           manifest-file: .release-please-manifest.json
 
