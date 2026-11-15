@@ -1,0 +1,48 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<phpunit xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+         xsi:noNamespaceSchemaLocation="vendor/phpunit/phpunit/phpunit.xsd"
+         bootstrap="vendor/autoload.php"
+         cacheDirectory=".phpunit.cache"
+         colors="true"
+         executionOrder="depends,defects"
+         beStrictAboutOutputDuringTests="true"
+         failOnRisky="true"
+         failOnWarning="true"
+         failOnNotice="true"
+         failOnDeprecation="true"
+         failOnPhpunitDeprecation="false"
+         displayDetailsOnTestsThatTriggerWarnings="true"
+         displayDetailsOnTestsThatTriggerNotices="true"
+         displayDetailsOnTestsThatTriggerDeprecations="true"
+         displayDetailsOnTestsThatTriggerErrors="true">
+    <testsuites>
+        <testsuite name="Unitaire">
+            <directory>tests/Unitaire</directory>
+        </testsuite>
+        <testsuite name="Vecteurs">
+            <directory>tests/Vecteurs</directory>
+        </testsuite>
+        <testsuite name="Proprietes">
+            <directory>tests/Proprietes</directory>
+        </testsuite>
+        <testsuite name="Robustesse">
+            <directory>tests/Robustesse</directory>
+        </testsuite>
+        <testsuite name="Cle">
+            <directory>tests/Cle</directory>
+        </testsuite>
+        <testsuite name="Laravel">
+            <directory>tests/Laravel</directory>
+        </testsuite>
+    </testsuites>
+    <source restrictNotices="true" restrictWarnings="true" ignoreIndirectDeprecations="true">
+        <include>
+            <directory>src</directory>
+        </include>
+    </source>
+    <php>
+        <ini name="error_reporting" value="-1"/>
+        <ini name="display_errors" value="1"/>
+        <ini name="zend.exception_ignore_args" value="0"/>
+    </php>
+</phpunit>

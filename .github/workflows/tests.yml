@@ -1,0 +1,112 @@
+name: Tests
+
+on:
+  push:
+    branches: [main]
+  pull_request:
+  workflow_dispatch:
+  workflow_call:
+
+permissions:
+  contents: read
+
+concurrency:
+  group: tests-${{ github.workflow }}-${{ github.ref }}-${{ github.event_name }}
+  cancel-in-progress: ${{ github.event_name == 'pull_request' }}
+
+jobs:
+  qualite:
+    name: Qualité (validate, Pint, PHPStan)
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v5
+
+      - uses: shivammathur/setup-php@v2
+        with:
+          php-version: '8.4'
+          extensions: gmp
+          coverage: none
+          tools: composer:v2
+
+      - name: Valider composer.json
+        run: composer validate --strict
+
+      - name: Installer les dépendances
+        run: composer update --no-interaction --no-progress --prefer-dist
+
+      - name: Style (Pint, PSR-12)
+        run: vendor/bin/pint --test
+
+      - name: Analyse statique (PHPStan, niveau max)
+        run: vendor/bin/phpstan analyse --no-progress --memory-limit=1G
+
+  tests:
+    name: PHP ${{ matrix.php }} · Laravel ${{ matrix.laravel }} · ${{ matrix.os }} · ${{ matrix.dependances }}
+    runs-on: ${{ matrix.os }}
+    strategy:
+      fail-fast: false
+      matrix:
+        os: [ubuntu-latest]
+        php: ['8.2', '8.3', '8.4', '8.5']
+        laravel: ['12', '13']
+        dependances: [hautes]
+        exclude:
+          - php: '8.2'
+            laravel: '13'
+        include:
+          - os: ubuntu-latest
+            php: '8.2'
+            laravel: '12'
+            dependances: basses
+          - os: ubuntu-latest
+            php: '8.3'
+            laravel: '13'
+            dependances: basses
+          - os: windows-latest
+            php: '8.4'
+            laravel: '13'
+            dependances: hautes
+    steps:
+      - uses: actions/checkout@v5
+
+      - uses: shivammathur/setup-php@v2
+        with:
+          php-version: ${{ matrix.php }}
+          extensions: gmp
+          coverage: none
+          tools: composer:v2
+
+      - name: Installer les dépendances (Laravel ${{ matrix.laravel }})
+        shell: bash
+        run: |
+          if [ "${{ matrix.laravel }}" = "12" ]; then BANC='orchestra/testbench:^10.0'; else BANC='orchestra/testbench:^11.0'; fi
+          OPTIONS=''
+          if [ "${{ matrix.dependances }}" = "basses" ]; then OPTIONS='--prefer-lowest --prefer-stable'; fi
+          composer update --no-interaction --no-progress --prefer-dist --with "$BANC" $OPTIONS
+
+      - name: Tests (PHPUnit)
+        run: vendor/bin/phpunit
+
+  sans-gmp:
+    name: Installation refusée sans ext-gmp
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v5
+
+      - uses: shivammathur/setup-php@v2
+        with:
+          php-version: '8.4'
+          extensions: :gmp
+          coverage: none
+          tools: composer:v2
+
+      - name: Vérifier que gmp est bien absente
+        run: php -r 'if (extension_loaded("gmp")) { fwrite(STDERR, "gmp est encore chargée : le test ne prouverait rien.\n"); exit(1); }'
+
+      - name: Composer doit refuser l'installation en nommant ext-gmp
+        run: |
+          if composer update --no-interaction --no-progress --prefer-dist > sortie.txt 2>&1; then
+            echo "L'installation a réussi sans gmp : c'est une anomalie."; cat sortie.txt; exit 1
+          fi
+          cat sortie.txt
+          grep -q 'ext-gmp' sortie.txt
