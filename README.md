@@ -166,6 +166,7 @@ class PageController extends Controller
 ```
 
 Le statut HTTP (`422`, `400`…) et la forme exacte du JSON sont ceux de **votre contrat d'API** : adaptez l'exemple.
+Le livrable 2 propose `404` lorsque la liste ne contient que des erreurs `ERR_OUT_OF_BOUNDS`, et `422` dès qu'une erreur de forme y figure ; l'exemple simplifié renvoie toujours `422`.
 
 ### Traiter toutes les erreurs du moteur au même endroit (facultatif)
 
@@ -305,7 +306,7 @@ BABEL_KEY=base64:…44 caractères…
 
 | Fonction | Où | Indice |
 | --- | --- | --- |
-| **F3** `normaliser(texte)` | votre serveur | minuscules, accents retirés, caractères hors alphabet remplacés ou supprimés. Le moteur **refuse** un texte non normalisé, il ne le convertit pas |
+| **F3** `normaliser(texte)` | votre serveur | minuscules, accents retirés, tout caractère hors alphabet remplacé par une espace, espaces consécutives réduites à une seule et espaces des bords retirées (livrable 2 du cahier des charges, F3). Le moteur **refuse** un texte non normalisé, il ne le convertit pas |
 | **F5** `valider(adresse)` | votre serveur | les règles du [§ 5](#5-les-adresses) et du tableau des erreurs ; les constantes `Moteur::MURS`… vous évitent de recopier les nombres |
 | **F7** `auHasard()` | votre serveur | tirez une adresse valide au hasard (attention : l'hexagone est un nombre de 3 004 chiffres en base 36) |
 | **F4** `localiser`, **F6** `voisine` | votre application web | position du texte dans la page, page suivante ou précédente |

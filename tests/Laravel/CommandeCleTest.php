@@ -81,6 +81,61 @@ final class CommandeCleTest extends CasLaravel
         self::assertStringContainsString('toutes les adresses', $sortie);
     }
 
+    public function testRefuseDEcraserUneCleExistanteEnCrlf(): void
+    {
+        $avant = "APP_KEY=base64:abc=\r\nBABEL_KEY=\"base64:AAECAwQFBgcICQoLDA0ODxAREhMUFRYXGBkaGxwdHh8=\"\r\n";
+        file_put_contents($this->fichierEnv(), $avant);
+
+        [$code] = $this->lancer();
+
+        self::assertSame(1, $code);
+        self::assertSame($avant, file_get_contents($this->fichierEnv()));
+    }
+
+    public function testForceRemplaceLaCleEnCrlf(): void
+    {
+        $ancienne = 'base64:AAECAwQFBgcICQoLDA0ODxAREhMUFRYXGBkaGxwdHh8=';
+        file_put_contents($this->fichierEnv(), "BABEL_KEY={$ancienne}\r\nAPP_ENV=local\r\n");
+
+        [$code] = $this->lancer(['--force' => true]);
+
+        self::assertSame(0, $code);
+        $contenu = (string) file_get_contents($this->fichierEnv());
+        self::assertStringNotContainsString($ancienne, $contenu);
+        self::assertSame(1, preg_match_all('/^BABEL_KEY=/m', $contenu));
+        self::assertMatchesRegularExpression('/\ABABEL_KEY=base64:[A-Za-z0-9+\/]{43}=\r\nAPP_ENV=local\r\n\z/', $contenu);
+    }
+
+    public function testCreeLaCleApresAppKeyEnCrlf(): void
+    {
+        file_put_contents($this->fichierEnv(), "APP_NAME=Babel\r\nAPP_KEY=base64:abc=\r\nAPP_DEBUG=true\r\n");
+
+        [$code] = $this->lancer();
+
+        self::assertSame(0, $code);
+        self::assertMatchesRegularExpression('/\AAPP_NAME=Babel\r\nAPP_KEY=base64:abc=\r\nBABEL_KEY=base64:[A-Za-z0-9+\/]{43}=\r\nAPP_DEBUG=true\r\n\z/', (string) file_get_contents($this->fichierEnv()));
+    }
+
+    public function testRemplitUneLigneVideEnCrlf(): void
+    {
+        file_put_contents($this->fichierEnv(), "APP_KEY=\r\nBABEL_KEY=\r\nDB_CONNECTION=sqlite\r\n");
+
+        [$code] = $this->lancer();
+
+        self::assertSame(0, $code);
+        self::assertMatchesRegularExpression('/\AAPP_KEY=\r\nBABEL_KEY=base64:[A-Za-z0-9+\/]{43}=\r\nDB_CONNECTION=sqlite\r\n\z/', (string) file_get_contents($this->fichierEnv()));
+    }
+
+    public function testAjouteALaFinSansAppKeyEnCrlf(): void
+    {
+        file_put_contents($this->fichierEnv(), "APP_NAME=Babel\r\nAPP_ENV=local");
+
+        [$code] = $this->lancer();
+
+        self::assertSame(0, $code);
+        self::assertMatchesRegularExpression('/\AAPP_NAME=Babel\r\nAPP_ENV=local\r\nBABEL_KEY=base64:[A-Za-z0-9+\/]{43}=\r\n\z/', (string) file_get_contents($this->fichierEnv()));
+    }
+
     public function testAfficherNeTouchePasAuFichier(): void
     {
         $avant = "APP_KEY=base64:abc=\n";
