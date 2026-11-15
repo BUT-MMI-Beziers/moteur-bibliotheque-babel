@@ -1,5 +1,21 @@
 # Changelog
 
+## [1.0.1](https://github.com/BUT-MMI-Beziers/moteur-bibliotheque-babel/compare/v1.0.0...v1.0.1) (2026-11-15)
+
+
+### Corrections
+
+* babel:cle reconnaît une clé existante dans un .env aux fins de ligne Windows (CRLF) ([1872b88](https://github.com/BUT-MMI-Beziers/moteur-bibliotheque-babel/commit/1872b8838ac01878a18cd58e4d29ab0b442a1c34))
+* babel:cle reconnaît une clé existante dans un .env aux fins de ligne Windows (CRLF) ([59e5ddc](https://github.com/BUT-MMI-Beziers/moteur-bibliotheque-babel/commit/59e5ddc905a2091a899b26dde512d24ecbdca80d))
+* babel:cle reconnaît une clé existante dans un .env aux fins de ligne Windows (CRLF) ([16fd97d](https://github.com/BUT-MMI-Beziers/moteur-bibliotheque-babel/commit/16fd97dfcb301f4976c28a13f60ecf16d30d3080))
+
+
+### Documentation
+
+* README, règle de F3 normaliser et statut HTTP de ERR_OUT_OF_BOUNDS ([1872b88](https://github.com/BUT-MMI-Beziers/moteur-bibliotheque-babel/commit/1872b8838ac01878a18cd58e4d29ab0b442a1c34))
+* README, règle de F3 normaliser et statut HTTP de ERR_OUT_OF_BOUNDS ([59e5ddc](https://github.com/BUT-MMI-Beziers/moteur-bibliotheque-babel/commit/59e5ddc905a2091a899b26dde512d24ecbdca80d))
+* README, règle de F3 normaliser et statut HTTP de ERR_OUT_OF_BOUNDS ([16fd97d](https://github.com/BUT-MMI-Beziers/moteur-bibliotheque-babel/commit/16fd97dfcb301f4976c28a13f60ecf16d30d3080))
+
 ## 1.0.0 (2026-11-15)
 
 
