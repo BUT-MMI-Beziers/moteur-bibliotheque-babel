@@ -73,7 +73,8 @@ jobs:
       - uses: shivammathur/setup-php@v2
         with:
           php-version: ${{ matrix.php }}
-          extensions: gmp
+          # fileinfo : exigée par Laravel (flysystem), absente par défaut sous Windows.
+          extensions: gmp, fileinfo, mbstring
           coverage: none
           tools: composer:v2
 
