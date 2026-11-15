@@ -69,7 +69,7 @@ final class Verifier extends Command
 
             return self::FAILURE;
         }
-        $this->reussite('Aller-retour avec la clé de la bibliothèque', 'lire puis chercher redonnent l\'adresse');
+        $this->reussite('Aller-retour avec la clé de la bibliothèque', 'lire ⇄ chercher');
 
         $debut = hrtime(true);
         for ($i = 1; $i <= self::LECTURES_CHRONOMETREES; $i++) {

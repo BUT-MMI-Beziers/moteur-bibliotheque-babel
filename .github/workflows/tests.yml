@@ -101,7 +101,8 @@ jobs:
           tools: composer:v2
 
       - name: Vérifier que gmp est bien absente
-        run: php -r 'if (extension_loaded("gmp")) { fwrite(STDERR, "gmp est encore chargée : le test ne prouverait rien.\n"); exit(1); }'
+        run: |
+          php -r 'if (extension_loaded("gmp")) { fwrite(STDERR, "gmp est encore chargée, le test ne prouverait rien.\n"); exit(1); }'
 
       - name: Composer doit refuser l'installation en nommant ext-gmp
         run: |
